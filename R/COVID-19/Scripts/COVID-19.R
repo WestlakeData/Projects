@@ -36,18 +36,27 @@ for (i in 1:nrow(us_counties_sort)){
   }
 }
 
-#Calculate per Capita Data
+#Calculate per Capita Data ----
 us_co_sort_pop <- merge(x = us_counties_sort, y= county_census[ , c("state","county","X2019")], by = c("state", "county"), all.x = TRUE)
+#Rename 2019 population estimate column
+colnames(us_co_sort_pop)[which(names(us_co_sort_pop) == "X2019")] <- "2019_pop"
+
+#Calculate total cases per 10k population
+us_co_sort_pop <- us_co_sort_pop %>% mutate(tot_cases_10k=(us_co_sort_pop$cases/us_co_sort_pop$`2019_pop`)*10000) 
+
+#Calculate new cases per 10k population
+us_co_sort_pop <- us_co_sort_pop %>%  mutate(new_cases_10k=(us_co_sort_pop$new_cases/us_co_sort_pop$`2019_pop`)*10000)
+
 
 #Utah Data Subsets of interest ####
-utah <- us_counties_sort %>% filter(state == "Utah")
+utah <- us_counties_sort_pop %>% filter(state == "Utah")
 top <- c("Salt Lake", "Utah", "Davis", "Cache", "Washington", "Weber")
 top_6 <- utah %>% filter(county %in% top)
 other_county <- utah %>% filter(!county %in% top)
 utah_co <- utah %>% filter(county == "Utah")
 
 #Hawaii Data Subset ####
-hawaii <- us_counties_sort %>% filter(state == "Hawaii")
+hawaii <- us_counties_sort_pop %>% filter(state == "Hawaii")
 oahu <- hawaii %>% filter(county == "Honolulu")
 
 #Plot Data ####
