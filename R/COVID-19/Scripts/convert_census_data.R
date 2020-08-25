@@ -13,5 +13,7 @@ co_est_19$county <- substring(co_est_19$county, 2)
 co_est_19$county[1] <- "United States"
 
 co_est_19$county <- gsub(" County", "", co_est_19$county)
+co_est_19$state <- trimws(co_est_19$state)
+
 
 write.csv(co_est_19, "./Data/county_census.csv")
